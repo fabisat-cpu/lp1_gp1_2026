@@ -6,15 +6,19 @@ package Dao;
 
 import Interface.IPersona;
 import Model.Persona;
+import Model.Rol;
 import Model.Usuario;
+import Util.ConexionSingleton;
 import java.util.List;
-
+import java.sql.*;
+import org.apache.tomcat.util.digester.Digester;
 /**
  *
  * @author HP
  */
 public class PersonaDaoImpl implements IPersona{
 
+    private Connection cn;
     //metodos sobreescritos de la interface...
     @Override
     public List<Persona> lista() {
@@ -23,7 +27,62 @@ public class PersonaDaoImpl implements IPersona{
 
     @Override
     public int insertar(Persona p, Usuario u) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+    PreparedStatement st;
+    String query=null;//consulta a sql
+    ResultSet rs; //respuesta del servidor
+    int id_persona = 0;
+    int r =0;
+        try {
+            query = "INSERT INTO persona (nombre, email, direccion, telefono)" + "VALUES(?,?,?,?)";
+            
+            cn=ConexionSingleton.getConnection();
+            st=cn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            st.setString(1, p.getNombre());
+            st.setString(2, p.getEmail());
+            st.setString(3, p.getDireccion());
+            st.setString(4, p.getTelefono());
+            r= st.executeUpdate();
+            
+            if (r!=0) {
+                rs=st.getGeneratedKeys();
+                if (rs.next()) {
+                    id_persona=rs.getInt(1);
+                    System.out.println("id_recuperado"+id_persona);
+                }
+                if (id_persona>0) {
+                    u.setRol(Rol.CLIENTE);
+                    String hashedPassword=u.HashPassword(u.getPassword());
+                    query="INSERT INTO usuarios (usuario, password, rol, id_persona)" + "VALUES(?,?,?,?)";
+                    st=cn.prepareStatement(query);
+                    st.setString(1, p.getEmail());
+                    st.setString(2, hashedPassword);
+                    st.setString(3, u.getRol().name());
+                    st.setInt(4, id_persona);
+                    r=st.executeUpdate();
+                    
+                } else {
+                    System.out.println("Eror al agregar persona");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al agregar" + e.getMessage());
+            try {
+                cn.rollback();
+                
+            } catch (Exception ex) {
+                System.out.println("Error de rollback" + ex.getMessage());
+            }
+        } finally {
+            if (cn!=null) {
+                try {
+                    
+                } catch (Exception ex) {
+                }
+                
+            }
+        }
+        return r;
     }
 
     @Override
