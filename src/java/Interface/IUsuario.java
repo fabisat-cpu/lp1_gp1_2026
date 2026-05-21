@@ -4,10 +4,14 @@
  */
 package Interface;
 
+import Model.Usuario;
+
 /**
  *
  * @author HP
  */
 public interface IUsuario {
+    
+    public Usuario validate(String user, String password);
     
 }
