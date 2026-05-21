@@ -19,7 +19,8 @@ public class TestProducto {
     
     public static void main(String[] args) {
        TestProducto t = new TestProducto();
-       t.listar();
+       //t.listar();//
+       t.insertar();
     }
     
     public static void listar(){
@@ -37,5 +38,27 @@ public class TestProducto {
             System.out.println("no hay data)");
         }
         
+    }
+    
+    
+    public static void insertar(){
+    
+        Producto p = new Producto();
+        
+        p.setNombre("Papas");
+        p.setDescripcion("Huayro");
+        p.setPrecio(4);
+        p.setStock(50);
+        p.setImage("/resouerce/img/papa.jpg");
+        
+        boolean result = dao.insertar(p);
+        
+        if (result) {
+            System.out.println("Datos correctos");
+        } else {
+            System.out.println("Datos incorrectos");
+        }
+    
+    
     }
 }
