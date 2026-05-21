@@ -4,10 +4,14 @@
  */
 package Interface;
 
+import Model.Pedido;
+
 /**
  *
  * @author HP
  */
 public interface IPedido {
+    
+    public int generarPedido(Pedido pedidos);
     
 }
