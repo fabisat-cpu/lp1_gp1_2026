@@ -31,7 +31,7 @@ public class TestPersona {
         
         Persona p= new Persona();
         p.setNombre("Fabiola Isabel");
-        p.setEmail("fabiola@gmail");
+        p.setEmail("fabiola1@gmail.com");
         p.setDireccion("Jr.Manzana");
         p.setTelefono("12345678");
         
@@ -50,7 +50,7 @@ public class TestPersona {
     
     public void validate(){
         
-        Usuario u = Udao.validate("fabiola@gamil.com", "admin234");
+        Usuario u = Udao.validate("fabiola1@gmail.com", "admin123");
         if (u !=null && u.getPersona() !=null) {
             
             System.out.println("Bienvenido" +u.getPersona().getNombre());
