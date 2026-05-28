@@ -22,33 +22,30 @@ public class UsuarioDaoImpl implements IUsuario{
     
     @Override
     public Usuario validate(String user, String password) {
-        
         Usuario u = null;
         Persona p = null;
         PreparedStatement st;
         ResultSet rs;
         String query = null;
-        
+
         try {
-            
-            u=new Usuario();
-            p=new Persona();
+            u = new Usuario();
+            p = new Persona();
             String hashedPassword = u.HashPassword(password);
+
+            query = " SELECT u.id_usuario, u.usuario, u.rol, p.id_persona, p.nombre "
+                    + " FROM usuarios u, persona p "
+                    + " WHERE p.id_persona = u.id_persona "
+                    + " AND u.usuario = ? "
+                    + " AND u.password = ?";
             
-            query = "SELECT u.id_persona, u.usuario, u.rol, p.id_persona, p.nombre"
-                    + "FROM usuarios u,persona p"
-                    + "WHERE p.id_persona = u .id_persona"
-                    + "AND u.usuario=?"
-                    + "AND u.password =?";
-            
-            cn=ConexionSingleton.getConnection();
-            st=cn.prepareStatement(query);
-            st.setString(1, user);
-            st.setString(2, hashedPassword);
-            rs = st.executeQuery();
-            
-            while (rs.next()) {                
-                u=new Usuario();
+              cn = ConexionSingleton.getConnection();
+              st = cn.prepareStatement(query);
+              st.setString(1, user);
+              st.setString(2, hashedPassword);
+              rs = st.executeQuery();
+              while (rs.next()) {                
+                u = new Usuario();
                 u.setId_usuario(rs.getInt("id_usuario"));
                 u.setUsuario(rs.getString("usuario"));
                 u.setRol(Rol.valueOf(rs.getString("rol").toUpperCase()));
@@ -56,25 +53,25 @@ public class UsuarioDaoImpl implements IUsuario{
                 p.setNombre(rs.getString("nombre"));
                 u.setPersona(p);
             }
-        }
-        catch (Exception e) {
+
+        } catch (Exception e) {
             System.out.println("Error al validar user" + e.getMessage());
             try {
                 cn.rollback();
-                
             } catch (Exception ex) {
-                System.out.println("Error de rollback" + ex.getMessage());
+                System.out.println("error de rollback" + ex.getMessage());
             }
+
         } finally {
-            if (cn!=null) {
+            if (cn != null) {
                 try {
-                    
                 } catch (Exception ex) {
                 }
-                
             }
         }
         return u;
+        
+
     }
-    
+
 }
